@@ -29,7 +29,7 @@ async def a_cdc_esta_online(ctx):
 
     async with aiohttp.ClientSession() as session:
         async with session.post(CDC_URL, headers=headers, data=data) as response:
-            if response.status < 404:
+            if response.status <= 404:
                 await ctx.send("Sim, ela está online! ✨🙌💫")
             else:
                 await ctx.send("Não, ela não está disponível. ⛔❌")

@@ -1,4 +1,3 @@
-import discord
 from nidavellir.clients.bifrost_proxy_redirects.cdc.cdc_proxy_manager import CDCProxyManager
 from cdc_integration.account.users import Users
 from config.environment import ENVIRONMENT

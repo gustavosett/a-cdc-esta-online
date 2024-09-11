@@ -1,0 +1,34 @@
+FROM python:3.12.1-alpine3.19
+RUN apk update
+RUN apk upgrade
+RUN apk add git
+
+COPY . /app
+
+WORKDIR app
+
+RUN pip3 install --upgrade pip
+RUN pip3 install --upgrade setuptools wheel
+
+ARG API_TOKEN
+ENV API_TOKEN=${API_TOKEN}
+ARG ENVIRONMENT
+ENV ENVIRONMENT=${ENVIRONMENT}
+
+# Environment Variables
+ENV COLLECTOR_URL COLLECTOR_URL
+ENV LOG_LEVEL LOG_LEVEL
+ENV LOGTAIL_TOKEN LOGTAIL_TOKEN
+ENV MONGO_HOST MONGO_HOST
+ENV MONGO_PASS MONGO_PASS
+ENV MONGO_USER MONGO_USER
+ENV DISCORD_TOKEN DISCORD_TOKEN
+
+EXPOSE 50051:50051
+
+RUN GRPC_BUILD_WITH_BORING_SSL_ASM="" GRPC_PYTHON_BUILD_SYSTEM_RE2=true GRPC_PYTHON_BUILD_SYSTEM_OPENSSL=true \
+    GRPC_PYTHON_BUILD_SYSTEM_ZLIB=true
+
+RUN pip install -r requirements.txt
+
+# RUN python -m grpc_tools.protoc @./config/grpc_tools_config.txt

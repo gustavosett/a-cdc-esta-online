@@ -4,7 +4,7 @@ import os
 from discord.ext import commands
 from config.environment import ENVIRONMENT
 
-prefix = "!"
+prefix = "-"
 intents = discord.Intents.default()
 intents.message_content = True
 intents.messages = True
@@ -22,5 +22,6 @@ async def load_commands():
 async def on_ready():
     await load_commands()
     print(f'Bot está pronto: {bot.user.name}')
+
 
 bot.run(ENVIRONMENT.discord_token.get_secret_value())

@@ -90,11 +90,8 @@ class Basic(commands.Cog):
 
     @commands.command()
     async def clear(self, ctx, quantity=1):
-        if ctx.message.author.guild_permissions.manage_messages:
-            await ctx.channel.purge(limit=quantity + 1)
-            await ctx.send(f'{quantity} mensagens foram limpas por {ctx.message.author.mention}.')
-        else:
-            await ctx.send("Você não tem permissão para executar esse comando.")
+        await ctx.channel.purge(limit=quantity + 1)
+        await ctx.send(f'{quantity} mensagens foram limpas por {ctx.message.author.mention}.')
 
     @commands.command()
     async def ping(self, ctx):

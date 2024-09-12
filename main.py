@@ -1,39 +1,27 @@
-import os
 import discord
+import os
+
 from discord.ext import commands
-import aiohttp
-import json
+from config.environment import ENVIRONMENT
 
-from dotenv import load_dotenv
-
-load_dotenv()
-DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
-CLIENT_KEY = os.getenv("CLIENT_KEY")
-CLIENT_SECRET = os.getenv("CLIENT_SECRET")
-CDC_URL = os.getenv("CDC_URL")
-
+prefix = "-"
 intents = discord.Intents.default()
 intents.message_content = True
-bot = commands.Bot(command_prefix="/", intents=intents)
+intents.messages = True
+bot = commands.Bot(command_prefix=prefix, intents=intents)
+
+
+async def load_commands():
+    for file in os.listdir("./commands"):
+        if file.endswith(".py"):
+            extension_name = file[:-3]
+            await bot.load_extension(f"commands.{extension_name}")
 
 
 @bot.event
 async def on_ready():
-    print(f"Logged on as {bot.user}!")
+    await load_commands()
+    print(f'Bot está pronto: {bot.user.name}')
 
 
-@bot.command()
-async def a_cdc_esta_online(ctx):
-    headers = {"Content-Type": "application/json"}
-    data = json.dumps({"client_key": CLIENT_KEY, "client_secret": CLIENT_SECRET})
-
-    async with aiohttp.ClientSession() as session:
-        async with session.post(CDC_URL, headers=headers, data=data) as response:
-            if response.status <= 404:
-                await ctx.send("Sim, ela está online! ✨🙌💫")
-            else:
-                await ctx.send("Não, ela não está disponível. ⛔❌")
-
-
-if __name__ == "__main__":
-    bot.run(DISCORD_TOKEN)
+bot.run(ENVIRONMENT.discord_token.get_secret_value())

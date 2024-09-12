@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: backend-app-<ENVIRONMENT>
+  name: <APP_NAME>
+  labels:
+    name: <APP_NAME>
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: <APP_NAME>
+  template:
+    metadata:
+      labels:
+        name: <APP_NAME>
+    spec:
+      nodeSelector:
+        doks.digitalocean.com/node-pool: <POOL>
+      containers:
+        - name: <APP_NAME>
+          image: <IMAGE>
+          imagePullPolicy: Always
+          command: [ "python", "main.py" ]
+          env:
+            - name: COLLECTOR_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: <CONFIGMAP>
+                  key: COLLECTOR_URL
+            - name: ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  name: <CONFIGMAP>
+                  key: ENVIRONMENT
+            - name: LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: <CONFIGMAP>
+                  key: LOG_LEVEL
+            - name: LOGTAIL_TOKEN
+              valueFrom:
+                configMapKeyRef:
+                  name: <CONFIGMAP>
+                  key: LOGTAIL_TOKEN
+            - name: MONGO_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: <CONFIGMAP>
+                  key: MONGO_HOST
+            - name: MONGO_PASS
+              valueFrom:
+                configMapKeyRef:
+                  name: <CONFIGMAP>
+                  key: MONGO_PASS
+            - name: MONGO_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: <CONFIGMAP>
+                  key: MONGO_USER
+            - name: DISCORD_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: cdc-secrets-bot-discord
+                  key: DISCORD_TOKEN
+            - name: CATENO_BASE_API_URL
+              valueFrom:
+                secretKeyRef:
+                  name: cdc-secrets-bot-discord
+                  key: CATENO_BASE_API_URL
+            - name: CATENO_CLIENT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: cdc-secrets-bot-discord
+                  key: CATENO_CLIENT_KEY
+            - name: CATENO_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: cdc-secrets-bot-discord
+                  key: CATENO_CLIENT_SECRET
+          ports:
+            - containerPort: 80
+              hostPort: 80
